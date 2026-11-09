@@ -1,0 +1,139 @@
+rules_version = '2';
+
+// Produktwissen – Firestore-Regeln
+// Deploy: firebase deploy --only firestore:rules
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ⚠ Admin-Adresse eintragen (identisch mit ADMIN_EMAIL in js/firebase-config.js).
+    function adminEmail() {
+      return 'tiefenauer@veloplus.ch';
+    }
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn()
+        && request.auth.token.firebase.sign_in_provider == 'google.com'
+        && request.auth.token.get('email_verified', false) == true
+        && request.auth.token.get('email', '').lower() == adminEmail().lower();
+    }
+
+    // Lernender, der mit dieser (anonymen) Anmeldung verknüpft ist.
+    function sessionUserId() {
+      return get(/databases/$(database)/documents/sessions/$(request.auth.uid)).data.userId;
+    }
+
+    // ---------- Lernende ----------
+    match /users/{userId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['name', 'createdAt'])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() >= 2
+        && request.resource.data.name.size() <= 60
+        && request.resource.data.createdAt == request.time;
+      allow update, delete: if isAdmin();
+    }
+
+    // Verknüpfung anonyme Auth-UID → gewählter Lernender
+    match /sessions/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow create, update: if signedIn()
+        && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['userId', 'updatedAt'])
+        && request.resource.data.userId is string
+        && exists(/databases/$(database)/documents/users/$(request.resource.data.userId));
+      allow delete: if isAdmin();
+    }
+
+    // ---------- Module ----------
+    // Öffentlicher Teil ohne Lösungen
+    match /modules/{moduleId} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    // MC-Lösungen + Erklärungen: erst lesbar, wenn der eigene Versuch eingereicht ist
+    match /moduleSolutions/{moduleId} {
+      allow get: if isAdmin() || (signedIn() && hasSubmitted(moduleId));
+      allow list: if isAdmin();
+      allow write: if isAdmin();
+    }
+
+    function hasSubmitted(moduleId) {
+      let path = /databases/$(database)/documents/attempts/$(sessionUserId() + '_' + moduleId);
+      return exists(path) && get(path).data.status in ['submitted', 'reviewed'];
+    }
+
+    // Musterantworten + Original-JSON: nur Admin
+    match /moduleKeys/{moduleId} {
+      allow read, write: if isAdmin();
+    }
+
+    // ---------- Versuche ----------
+    match /attempts/{attemptId} {
+      allow read: if signedIn();
+      allow create: if isAdmin() || (signedIn() && validNewAttempt(attemptId));
+      allow update: if isAdmin() || (signedIn() && validLearnerUpdate());
+      allow delete: if isAdmin();
+    }
+
+    function validNewAttempt(attemptId) {
+      let d = request.resource.data;
+      let fields = ['userId', 'moduleId', 'status', 'answers', 'startedAt', 'updatedAt'];
+      return d.keys().hasOnly(fields)
+        && d.keys().hasAll(fields)
+        && d.userId is string
+        && d.moduleId is string
+        && attemptId == d.userId + '_' + d.moduleId
+        && d.userId == sessionUserId()
+        && d.status == 'in_progress'
+        && d.answers is map
+        && d.answers.size() == 0
+        && d.startedAt == request.time
+        && d.updatedAt == request.time
+        && get(/databases/$(database)/documents/modules/$(d.moduleId)).data.active == true;
+    }
+
+    // Lernende schreiben nur Versuche im Status "in_progress":
+    // entweder genau eine Antwort speichern (nur { value }, keine Bewertung) oder einreichen.
+    function validLearnerUpdate() {
+      let before = resource.data;
+      let after = request.resource.data;
+      let changed = after.diff(before).affectedKeys();
+      return before.status == 'in_progress'
+        && before.userId == sessionUserId()
+        && after.updatedAt == request.time
+        && (isAnswerSave(before, after, changed) || isSubmit(after, changed));
+    }
+
+    function isAnswerSave(before, after, changed) {
+      let answerChanges = after.answers.diff(before.answers).affectedKeys();
+      return after.status == 'in_progress'
+        && changed.hasOnly(['answers', 'lastSaved', 'updatedAt'])
+        && after.lastSaved is string
+        && answerChanges.hasOnly([after.lastSaved])
+        && after.answers[after.lastSaved].keys().hasOnly(['value'])
+        && validValue(after.answers[after.lastSaved].value);
+    }
+
+    function validValue(v) {
+      return (v is string && v.size() <= 5000) || (v is list && v.size() <= 20);
+    }
+
+    function isSubmit(after, changed) {
+      return after.status == 'submitted'
+        && changed.hasOnly(['status', 'submittedAt', 'updatedAt'])
+        && after.submittedAt == request.time;
+    }
+
+    // Archivierte Versuche nach einem Reset: nur Admin
+    match /attemptHistory/{historyId} {
+      allow read, write: if isAdmin();
+    }
+  }
+}

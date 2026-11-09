@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <title>Produktwissen</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#/"><span class="brand-dot"></span>Produktwissen</a>
+    <span class="spacer"></span>
+    <div class="who" id="who"></div>
+  </header>
+
+  <main id="app">
+    <div class="loading"><div class="spinner"></div>Lädt …</div>
+  </main>
+
+  <div class="bottombar hidden" id="bottombar">
+    <div class="inner">
+      <span class="save-state" id="saveState"></span>
+      <button class="btn-primary" id="submitBtn" type="button">Modul einreichen</button>
+    </div>
+  </div>
+
+  <noscript><p style="padding:16px">Bitte JavaScript aktivieren.</p></noscript>
+  <script type="module" src="js/learner.js"></script>
+</body>
+</html>

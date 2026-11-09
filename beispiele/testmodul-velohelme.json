@@ -1,0 +1,61 @@
+{
+  "id": "testmodul-velohelme",
+  "title": "Testmodul: Velohelme",
+  "description": "Kurzes Testmodul mit 5 Fragen zum Ausprobieren der App.",
+  "productArea": "Helme",
+  "sourceUrl": "https://www.veloplus.ch/",
+  "createdAt": "2026-11-09",
+  "questions": [
+    {
+      "id": "q01",
+      "type": "mc",
+      "text": "Welche Norm muss ein Velohelm in der Schweiz und der EU erfüllen?",
+      "options": ["EN 1078", "EN 166", "EN 13356", "ISO 9001"],
+      "correct": [0],
+      "explanation": "EN 1078 ist die europäische Norm für Velo-, Skateboard- und Inlinehelme.",
+      "hintUrl": "https://www.veloplus.ch/"
+    },
+    {
+      "id": "q02",
+      "type": "mc",
+      "text": "Wann sollte ein Velohelm ersetzt werden?",
+      "options": [
+        "Nach einem Sturz mit Aufprall auf den Kopf",
+        "Wenn die Schale oder der Schaumstoff Risse hat",
+        "Jedes Jahr zu Saisonbeginn, egal in welchem Zustand",
+        "Wenn er nicht mehr richtig passt"
+      ],
+      "correct": [0, 1, 3],
+      "explanation": "Nach einem Aufprall kann der Schaum unsichtbar beschädigt sein. Ein jährlicher Ersatz ohne Grund ist nicht nötig, die Herstellerangaben zur Lebensdauer gelten aber.",
+      "hintUrl": "https://www.veloplus.ch/"
+    },
+    {
+      "id": "q03",
+      "type": "mc",
+      "text": "Was ist die Hauptaufgabe eines MIPS-Systems im Helm?",
+      "options": [
+        "Bessere Belüftung",
+        "Reduktion von Rotationskräften bei einem schrägen Aufprall",
+        "Weniger Gewicht",
+        "Integriertes Rücklicht"
+      ],
+      "correct": [1],
+      "explanation": "MIPS ist eine Gleitschicht im Helm, die sich bei einem schrägen Aufprall leicht verschiebt und so Rotationskräfte auf das Gehirn reduziert.",
+      "hintUrl": "https://www.veloplus.ch/"
+    },
+    {
+      "id": "q04",
+      "type": "open",
+      "text": "Ein Kunde fragt, wie er die richtige Helmgrösse findet. Was erklärst du ihm?",
+      "modelAnswer": "Kopfumfang mit einem Massband ca. 1 cm über den Augenbrauen messen und die Grösse nach der Tabelle des Herstellers wählen. Der Helm sitzt waagrecht, etwa zwei Finger breit über den Augenbrauen. Mit dem Verstellsystem hinten anpassen, die Riemen bilden unter den Ohren ein V, unter dem Kinn hat ein Finger Platz. Zum Schluss Kopf schütteln: Der Helm darf nicht verrutschen.",
+      "hintUrl": "https://www.veloplus.ch/"
+    },
+    {
+      "id": "q05",
+      "type": "open",
+      "text": "Eine Kundin pendelt im Winter täglich bei Dunkelheit. Welche Merkmale sollte ihr Helm haben und warum?",
+      "modelAnswer": "Gute Sichtbarkeit: helle Farbe, Reflektoren, integriertes oder ansteckbares Rücklicht. Komfort für den Alltag: gute Passform, einfach zu verstellen. Wintertauglich: weniger Belüftungsöffnungen oder Wintereinsatz/Ohrenschutz, evtl. Visier gegen Regen. Optional MIPS für zusätzlichen Schutz.",
+      "hintUrl": "https://www.veloplus.ch/"
+    }
+  ]
+}

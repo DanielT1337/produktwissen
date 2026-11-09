@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex">
+  <title>Admin – Produktwissen</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#/"><span class="brand-dot"></span>Admin</a>
+    <nav class="tabs hidden" id="tabs">
+      <a href="#/" data-tab="overview">Übersicht <span class="count hidden" id="submittedCount"></span></a>
+      <a href="#/module" data-tab="modules">Module</a>
+      <a href="#/import" data-tab="import">Import</a>
+    </nav>
+    <span class="spacer"></span>
+    <div class="who" id="who"></div>
+  </header>
+
+  <main id="app" class="wide">
+    <div class="loading"><div class="spinner"></div>Lädt …</div>
+  </main>
+
+  <div class="bottombar hidden" id="reviewBar">
+    <div class="inner">
+      <span class="small" id="reviewSummary"></span>
+      <button class="btn-primary" type="button" id="finalizeBtn">Als korrigiert abschliessen</button>
+    </div>
+  </div>
+
+  <script type="module" src="js/admin.js"></script>
+</body>
+</html>
